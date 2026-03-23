@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Outfit:wght@100..900&display=swap");
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark,.dark *));
+
+* {
+  font-family: "Outfit", sans-serif;
+}
+@theme{
+    --color-primary : #6CCCF5;
+}
+
+::-webkit-scrollbar{
+    display: none
+}
+
+.reset-tw :not(pre):not(code){
+    all : revert;
+}
+
+.loader div:nth-child(2){
+    animation-delay: 0.2s;
+}
+.loader div:nth-child(3){
+    animation-delay: 0.4s;
+}
