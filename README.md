@@ -35,6 +35,8 @@ Installation
 
 
 ⚠️ Note
-1)Some UI-related issues are still present and need to be resolved.
-2)Further details will be shared for the env file later (asap).
-3)Future updates will include features like transactions and credits for enhanced functionality.
+  1)Some UI-related issues are still present and need to be resolved.
+  
+  2)Further details will be shared for the installation and env file later (asap).
+  
+  3)Future updates will include features like transactions and credits for enhanced functionality.
