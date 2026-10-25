@@ -1,2 +1,14 @@
-node_modules
-.env
+# Dependencies
+node_modules/
+client/node_modules/
+backend/node_modules/
+
+# Environment variables
+client/.env
+backend/.env
+
+# Optional: ignore all .env files in any folder
+**/.env
+
+# Build output
+dist/
