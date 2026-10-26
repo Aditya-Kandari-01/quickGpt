@@ -7,9 +7,16 @@ import {useAppContext} from "../context/AppContext"
 const Community = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const {token} = useAppContext()
   const fetchImage = async () => {
     try{
-      const {data} = await axios.get('/api/user/publsihed-images')
+      const {data} = await axios.get('/api/user/published-images',{
+        headers : {
+          Authorization : token
+        }
+       })
+      console.log(data)
+      
       if (data.success){
         setImages(data.images)
       }else{
@@ -17,8 +24,9 @@ const Community = () => {
       }
     }catch(error){
       toast.error(error.message)
+    }finally{
+      setLoading(false)
     }
-    setLoading(false)
   };
 
   useEffect(() => {

@@ -93,7 +93,8 @@ export const getPublishedImages = async (req, res) => {
         },
       },
     ]);
-    res.json({
+  
+    return res.json({
       success: true,
       images: publishedImageMessages.reverese(),
     });

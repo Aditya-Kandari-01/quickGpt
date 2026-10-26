@@ -1,6 +1,4 @@
-import { response } from "express";
 import Chat from "../models/Chat.js";
-import User from "../models/User.js";
 import imagekit from "../configs/imageKit.js";
 import openai from "../configs/openai.js";
 import axios from "axios";
@@ -14,6 +12,12 @@ export const textMessageController = async (req, res) => {
       userId,
       _id: chatId,
     });
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat not found",
+      });
+    }
     chat.messages.push({
       role: "user",
       content: prompt,
@@ -74,6 +78,13 @@ export const imageMessageController = async (req, res) => {
     // Find Chat
     const chat = await Chat.findOne({ userId, _id: chatId });
 
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat not found",
+      });
+    }
+
     // Chat Messages
     chat.messages.push({
       role: "user",
@@ -93,7 +104,7 @@ export const imageMessageController = async (req, res) => {
     });
 
     // Convert To Base64
-    const base64Image = `data:image/png;base64 ,${Buffer.from(aiImageResponse.data, "binary").toString("base64")}`;
+    const base64Image = `data:image/png;base64,${Buffer.from(aiImageResponse.data).toString("base64")}`;
 
     // Upload to Imagekit Media Library
     const uploadResponse = await imagekit.upload({
@@ -102,22 +113,24 @@ export const imageMessageController = async (req, res) => {
       folder: "cloneGpt",
     });
     const reply = {
-      role: "assitant",
+      role: "assistant",
       content: uploadResponse.url,
       timestamp: Date.now(),
       isImage: true,
       isPublished,
     };
-    res.json({
-      success: true,
-      reply,
-    });
     chat.messages.push(reply);
     await chat.save();
-    await User.updateOne({
-      _id: userId,
+
+    return res.json({
+      success: true,
+      reply
     });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    console.error("imageMessageController error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };

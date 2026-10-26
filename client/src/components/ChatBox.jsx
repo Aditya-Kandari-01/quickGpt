@@ -38,6 +38,7 @@ const ChatBox = () => {
         { chatId: selectedChat._id, prompt, isPublished },
         { headers: { Authorization: token } },
       );
+      console.log(data)
 
       if (data.success) {
         setMessages((prev) => [...prev, data.reply]);
@@ -90,6 +91,7 @@ const ChatBox = () => {
           return <Message key={idx} message={msg}></Message>;
         })}
         {/* Three Dots Loading */}
+
         {loading && (
           <div className="loader flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-gray-500 dark:bg-whtie animate-bounce"></div>
@@ -97,6 +99,7 @@ const ChatBox = () => {
             <div className="w-1.5 h-1.5 rounded-full bg-gray-500 dark:bg-whtie animate-bounce"></div>
           </div>
         )}
+
       </div>
 
       

@@ -32,6 +32,7 @@ export const AppContextProvider = ({ children }) => {
       setLoadingUser(false);
     }
   };
+  
   const createNewChat = async () => {
     try {
       if (!user) {
@@ -118,6 +119,7 @@ export const AppContextProvider = ({ children }) => {
     setToken,
     axios
   };
+  
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 export const useAppContext = () => useContext(AppContext);

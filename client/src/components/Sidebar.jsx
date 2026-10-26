@@ -84,7 +84,6 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
       </div>
       {/* Recent Chats */}
       {chats.length > 0 && <p className="mt-4 text-sm">Recent Chats</p>}
-      {console.log(chats)}
       <div>
         {chats
           .filter((chat) => 
