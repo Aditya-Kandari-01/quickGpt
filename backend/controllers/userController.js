@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import Chat from "../models/Chat.js"
+
 // Token Generation
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -12,7 +14,7 @@ const generateToken = (id) => {
 
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
-  
+
   try {
     const userExist = await User.findOne({ email });
     if (userExist) {
@@ -86,20 +88,72 @@ export const getPublishedImages = async (req, res) => {
         },
       },
       {
+        $sort: {
+          "messages.timestamp": -1
+        }
+      },
+      {
         $project: {
           _id: 0,
+          messageId: "$messages._id",
           imageUrl: "$messages.content",
           userName: "$userName",
-        },
+          timestamp: "$messages.timestamp",
+        }
       },
     ]);
-  
+
     return res.json({
       success: true,
-      images: publishedImageMessages.reverese(),
+      images: publishedImageMessages,
     });
   } catch (error) {
     return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// to publish the images 
+export const publishImage = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { chatId, messageId } = req.body;
+
+    const chat = await Chat.findOne({
+      _id: chatId,
+      userId,
+    });
+
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat not found",
+      });
+    }
+
+    const message = chat.messages.id(messageId);
+
+    if (!message || !message.isImage) {
+      return res.status(404).json({
+        success: false,
+        message: "Image message not found",
+      });
+    }
+
+    message.isPublished = true;
+
+    await chat.save();
+
+    return res.json({
+      success: true,
+      message: "Image published successfully",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

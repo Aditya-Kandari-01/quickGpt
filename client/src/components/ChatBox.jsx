@@ -13,7 +13,32 @@ const ChatBox = () => {
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [mode, setMode] = useState("text");
-  const [isPublished, setIsPublished] = useState(false);
+
+  const publishImage = async (messageId) => {
+    try {
+      const { data } = await axios.post(
+        "/api/user/publish",
+        { messageId, chatId: selectedChat._id },
+        { headers: { Authorization: token } }
+      );
+
+      if (data.success) {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg._id === messageId
+              ? { ...msg, isPublished: true }
+              : msg
+          )
+        );
+
+        toast.success("Image published to community!");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   const onSubmit = async (event) => {
     try {
@@ -35,10 +60,9 @@ const ChatBox = () => {
       ]);
       const { data } = await axios.post(
         `/api/message/${mode}`,
-        { chatId: selectedChat._id, prompt, isPublished },
+        { chatId: selectedChat._id, prompt },
         { headers: { Authorization: token } },
       );
-      console.log(data)
 
       if (data.success) {
         setMessages((prev) => [...prev, data.reply]);
@@ -87,9 +111,13 @@ const ChatBox = () => {
             </p>
           </div>
         )}
-        {messages.map((msg, idx) => {
-          return <Message key={idx} message={msg}></Message>;
-        })}
+        {messages.map((msg, idx) => (
+          <Message
+            key={msg._id || idx}
+            message={msg}
+            onPublish={publishImage}
+          />
+        ))}
         {/* Three Dots Loading */}
 
         {loading && (
@@ -101,19 +129,6 @@ const ChatBox = () => {
         )}
 
       </div>
-
-      
-      {mode === "image" && (
-        <label className="inline-flex items-center gap-2 mb-3 text-sm mx-auto">
-          <p className="text-xs">Publish Generated Image To Community</p>
-          <input
-            type="checkbox"
-            className="cursor-pointer"
-            checked={isPublished}
-            onChange={(event) => setIsPublished(event.target.checked)}
-          />
-        </label>
-      )}
 
       {/* Prompt Input*/}
       

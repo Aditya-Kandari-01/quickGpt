@@ -1,45 +1,63 @@
+
 import React, { useEffect } from "react";
-import { assets } from "../assets/assets";
-import moment from "moment";
 import Markdown from "react-markdown";
-import Prism from "prismjs"
-const Message = ({ message }) => {
+import Prism from "prismjs";
 
-  useEffect(()=>{
-    Prism.highlightAll()
-  },[message.content])
+const Message = ({ message, onPublish }) => {
+  useEffect(() => {
+    Prism.highlightAll();
+  }, [message.content]);
 
+  const isUser = message.role === "user";
 
   return (
-    <div>
-      {message.role === "user" ? (
-        <div className="flex items-start justify-end my-4 gap-2">
-          <div className="flex flex-col p-2 gap-2 px-4 bg-slate-50 dark:bg-[#57317C]/30 border border-[#80609F]/30 rounded-md max-2-2xl">
-            <p className="text-sm dark:text-primary">{message.content}</p>
-            <span className="text-sm text-gray-400 dark:text-[#B1A6C0]">
-              {moment(message.timestamp).fromNow()}
-            </span>
-          </div>
-          <img src={assets.user_icon} className="w-8 rounded-full" alt="" />
-        </div>
-      ) : (
-        <div className="inlinle-flex flex-col gap-2 p-2 px-4 max-2-2xl bg-primary/20 dark:bg-[#57317C]/30 border border-[#80609F]/30 rounded-md my-4">
-          {message.isImage ? (
+    <div
+      className={`w-full flex mb-6 ${
+        isUser ? "justify-end" : "justify-start"
+      }`}
+    >
+      <div
+        className={`${
+          isUser
+            ? "max-w-[75%] bg-primary/15 dark:bg-[#583C79]/30 rounded-2xl px-4 py-3"
+            : "max-w-[85%]"
+        }`}
+      >
+        {message.isImage ? (
+          <div className="flex flex-col gap-3">
             <img
               src={message.content}
-              alt=""
-              className="w-full max-w-md mt-2 rounded-md"
+              alt="Generated image"
+              className="w-full max-w-md mt-2 rounded-xl"
             />
-          ) : (
-            <div className="text-sm dark:text-primary reset-tw">
-              <Markdown>{message.content}</Markdown>
-            </div>
-          )}
-          <span className="text-sm text-gray-400 dark:text-[#B1A6C0]">
-            {moment(message.timestamp).fromNow()}
-          </span>
-        </div>
-      )}
+
+            {!message.isPublished && (
+              <button
+                onClick={() => onPublish(message._id)}
+                className="bg-primary text-white px-4 py-2 rounded-md w-fit text-sm"
+              >
+                Publish to Community
+              </button>
+            )}
+
+            {message.isPublished && (
+              <p className="text-sm text-green-500">
+                Published to Community
+              </p>
+            )}
+          </div>
+        ) : (
+          <div
+            className={`text-sm ${
+              isUser
+                ? "text-gray-800 dark:text-white"
+                : "dark:text-primary"
+            } reset-tw`}
+          >
+            <Markdown>{message.content}</Markdown>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

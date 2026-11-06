@@ -19,6 +19,10 @@ const chatSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
       },
+      isPublished: {
+        type: Boolean,
+        default: false,
+      },
       content: {
         type: String,
         required: true,

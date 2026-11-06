@@ -4,6 +4,7 @@ import {
   getUser,
   loginUser,
   getPublishedImages,
+  publishImage
 } from "../controllers/userController.js";
 import { protect } from "../middleware/auth.js";
 
@@ -13,5 +14,6 @@ userRouter.post("/register", registerUser);
 userRouter.post("/login", loginUser);
 userRouter.get("/data", protect, getUser);
 userRouter.get("/published-images", protect, getPublishedImages);
+userRouter.post("/publish",protect,publishImage)
 
 export default userRouter;
